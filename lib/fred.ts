@@ -12,6 +12,11 @@ export interface FredDataPoint {
   value: number;
 }
 
+interface FredObservation {
+  date: string;
+  value: string;
+}
+
 /**
  * FRED APIから特定のシリーズのデータを取得
  * @param seriesId FRED シリーズID（例: 'CPIAUCSL', 'UNRATE'）
@@ -35,11 +40,11 @@ export async function fetchFredData(
     const data = await response.json();
 
     // データを整形して返す
-    const observations = data.observations || [];
+    const observations: FredObservation[] = data.observations || [];
 
     return observations
-      .filter((obs: any) => obs.value !== '.')  // 欠損値を除外
-      .map((obs: any) => ({
+      .filter((obs) => obs.value !== '.')  // 欠損値を除外
+      .map((obs) => ({
         date: obs.date,
         value: parseFloat(obs.value)
       }))
